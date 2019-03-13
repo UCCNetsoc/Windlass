@@ -25,7 +25,11 @@ func NewServerGroup() (*ServerGroup, error) {
 		return nil, err
 	}
 
-	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_NAME"), os.Getenv("DB_PASS"))
+	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", 
+		os.Getenv("DB_HOST"), 
+		os.Getenv("DB_USER"), 
+		os.Getenv("DB_NAME"), 
+		os.Getenv("DB_PASS"))
 	dbConn, err := gorm.Open("mysql", dbURI)
 	if err != nil {
 		return nil, err

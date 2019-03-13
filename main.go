@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/UCCNetworkingSociety/CaaS-Backend/api"
+	"github.com/UCCNetworkingSociety/Windlass/api"
 	"log"
-	"github.com/UCCNetworkingSociety/CaaS-Backend/types"
+	"github.com/UCCNetworkingSociety/Windlass/types"
 	"net/http"
 	"github.com/go-chi/chi"
 )
@@ -16,7 +16,7 @@ func main() {
 	}
 	defer s.Close()
 	
-	a := api.NewAPI(s, r)
+	api.NewAPI(s, r)
 
 	http.ListenAndServe("8080", r)
 }

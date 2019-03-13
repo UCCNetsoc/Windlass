@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 	"github.com/go-chi/chi"
-	"github.com/UCCNetworkingSociety/CaaS-Backend/types"
+	"github.com/UCCNetworkingSociety/Windlass/types"
 )
 
 type API struct {
@@ -13,8 +13,8 @@ type API struct {
 
 func NewAPI(serverGroup *types.ServerGroup, router *chi.Mux) *API {
 	return &API{
-		s: serverGroup,
-		r: router,
+		servers: serverGroup,
+		routes: router,
 	}
 }
 
