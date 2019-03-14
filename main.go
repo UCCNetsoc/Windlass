@@ -16,7 +16,7 @@ func main() {
 	}
 	defer s.Close()
 	
-	api.NewAPI(s, r)
+	api.NewAPI(s, r).SetupRoutes()
 
-	http.ListenAndServe("8080", r)
+	http.ListenAndServe(":8080", r)
 }

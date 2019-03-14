@@ -19,10 +19,19 @@ type ServerGroup struct {
 	LDAP *ldap.Conn
 }
 
+type ServerGroupError struct {
+	component string
+	err error
+}
+
+func (e ServerGroupError) Error() string {
+	return fmt.Sprintf("%s: %v", e.component, e.err)
+}
+
 func NewServerGroup() (*ServerGroup, error) {
 	cli, err := client.NewClient("unix:///var/run/docker.sock", "", &http.Client{Timeout: time.Second * 5}, nil)
 	if err != nil {
-		return nil, err
+		return nil, ServerGroupError{"Docker", err}
 	}
 
 	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", 
@@ -32,7 +41,7 @@ func NewServerGroup() (*ServerGroup, error) {
 		os.Getenv("DB_PASS"))
 	dbConn, err := gorm.Open("mysql", dbURI)
 	if err != nil {
-		return nil, err
+		return nil, ServerGroupError{"Database", err}
 	}
 
 	ldapConn, err := ldap.New(ldap.Config{
@@ -42,14 +51,14 @@ func NewServerGroup() (*ServerGroup, error) {
 		Host: os.Getenv("LDAP_HOST"),
 	})
 	if err != nil {
-		return nil, err	
+		return nil, ServerGroupError{"LDAP", err}	
 	}
 
 	sqliteConn, err := sqlite.Open(sqlite.ConnectionURL{
 		Database: "./tokens.db",
 	})
 	if err != nil {
-		return nil, err
+		return nil, ServerGroupError{"SQLite", err}
 	}
 
 	return &ServerGroup{

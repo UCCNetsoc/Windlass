@@ -1,7 +1,6 @@
 package api
 
 import (
-	"net/http"
 	"github.com/go-chi/chi"
 	"github.com/UCCNetworkingSociety/Windlass/types"
 )
@@ -18,11 +17,10 @@ func NewAPI(serverGroup *types.ServerGroup, router *chi.Mux) *API {
 	}
 }
 
-func (a *API) Routes() {
+func (a *API) SetupRoutes() {
 	r := chi.NewRouter()
-	r.Get("/containers", a.listContainers)
-}
-
-func (a *API) listContainers(w http.ResponseWriter, r *http.Request) {
-
+	r.Group(func(r chi.Router) {
+		r.Get("/containers", a.listContainers)
+	})
+	a.routes.Mount("/api", r)
 }
