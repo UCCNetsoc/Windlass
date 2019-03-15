@@ -1,27 +1,27 @@
 package types
 
 import (
+	"fmt"
+	"os"
+	"time"
+
+	ldap "github.com/UCCNetworkingSociety/netsoc-go-ldap"
+	docker "github.com/fsouza/go-dockerclient"
+	"github.com/jinzhu/gorm"
 	"upper.io/db.v3/lib/sqlbuilder"
 	"upper.io/db.v3/sqlite"
-	"os"
-	"fmt"
-	"github.com/jinzhu/gorm"
-	"github.com/UCCNetworkingSociety/netsoc-go-ldap"
-	"time"
-	"net/http"
-	"github.com/docker/docker/client"
 )
 
 type ServerGroup struct {
 	Database *gorm.DB
-	SQLite sqlbuilder.Database
-	Docker *client.Client
-	LDAP *ldap.Conn
+	SQLite   sqlbuilder.Database
+	Docker   *docker.Client
+	LDAP     *ldap.Conn
 }
 
 type ServerGroupError struct {
 	component string
-	err error
+	err       error
 }
 
 func (e ServerGroupError) Error() string {
@@ -29,15 +29,16 @@ func (e ServerGroupError) Error() string {
 }
 
 func NewServerGroup() (*ServerGroup, error) {
-	cli, err := client.NewClient("unix:///var/run/docker.sock", "", &http.Client{Timeout: time.Second * 5}, nil)
+	cli, err := docker.NewClient("unix:///var/run/docker.sock")
 	if err != nil {
 		return nil, ServerGroupError{"Docker", err}
 	}
+	cli.SetTimeout(time.Second * 3)
 
-	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", 
-		os.Getenv("DB_HOST"), 
-		os.Getenv("DB_USER"), 
-		os.Getenv("DB_NAME"), 
+	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_NAME"),
 		os.Getenv("DB_PASS"))
 	dbConn, err := gorm.Open("mysql", dbURI)
 	if err != nil {
@@ -45,13 +46,13 @@ func NewServerGroup() (*ServerGroup, error) {
 	}
 
 	ldapConn, err := ldap.New(ldap.Config{
-		BaseDN: os.Getenv("LDAP_DN"),
+		BaseDN:   os.Getenv("LDAP_DN"),
 		BindUser: os.Getenv("LDAP_USER"),
 		BindPass: os.Getenv("LDAP_PASS"),
-		Host: os.Getenv("LDAP_HOST"),
+		Host:     os.Getenv("LDAP_HOST"),
 	})
 	if err != nil {
-		return nil, ServerGroupError{"LDAP", err}	
+		return nil, ServerGroupError{"LDAP", err}
 	}
 
 	sqliteConn, err := sqlite.Open(sqlite.ConnectionURL{
@@ -62,16 +63,15 @@ func NewServerGroup() (*ServerGroup, error) {
 	}
 
 	return &ServerGroup{
-		Docker: cli,
+		Docker:   cli,
 		Database: dbConn,
-		LDAP: ldapConn,
-		SQLite: sqliteConn,
+		LDAP:     ldapConn,
+		SQLite:   sqliteConn,
 	}, nil
 }
 
 func (s *ServerGroup) Close() {
 	s.SQLite.Close()
 	s.Database.Close()
-	s.Docker.Close()
 	s.LDAP.Close()
 }
