@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/spf13/viper"
 	"net/http"
 
 	"github.com/UCCNetworkingSociety/Windlass/api"
@@ -11,6 +12,11 @@ import (
 
 func main() {
 	r := chi.NewRouter()
+
+	must.Do(func() error {
+		viper.GetViper()
+		return nil
+	})
 
 	var s *types.ServerGroup
 	must.Do(func() error {
