@@ -13,9 +13,11 @@ require (
 	github.com/docker/docker v1.13.1
 	github.com/fsouza/go-dockerclient v1.3.6
 	github.com/go-chi/chi v4.0.2+incompatible
+	github.com/go-sql-driver/mysql v1.4.1
 	github.com/jinzhu/gorm v1.9.2
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
+	github.com/spf13/viper v1.3.2 // indirect
 	golang.org/x/net v0.0.0-20190313220215-9f648a60d977 // indirect
 	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect
 	gopkg.in/ldap.v2 v2.5.1 // indirect

@@ -1,22 +1,26 @@
 package main
 
 import (
-	"github.com/UCCNetworkingSociety/Windlass/api"
-	"log"
-	"github.com/UCCNetworkingSociety/Windlass/types"
 	"net/http"
+
+	"github.com/UCCNetworkingSociety/Windlass/api"
+	"github.com/UCCNetworkingSociety/Windlass/must"
+	"github.com/UCCNetworkingSociety/Windlass/types"
 	"github.com/go-chi/chi"
 )
 
-func main() { 
+func main() {
 	r := chi.NewRouter()
-	s, err := types.NewServerGroup()
-	if err != nil {
-		log.Fatalln(err)
-	}
+
+	var s *types.ServerGroup
+	must.Do(func() error {
+		var err error
+		s, err = types.NewServerGroup()
+		return err
+	})
 	defer s.Close()
-	
-	api.NewAPI(s, r).SetupRoutes()
+
+	api.NewAPI(s, r).Init()
 
 	http.ListenAndServe(":8080", r)
 }
