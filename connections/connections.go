@@ -30,11 +30,11 @@ func (e ServerGroupError) Error() string {
 	return fmt.Sprintf("%s: %v", e.component, e.err)
 }
 
-var Group ServerGroup
-
 func (e ServerGroupError) Component() string {
 	return e.component
 }
+
+var Group ServerGroup
 
 func EstablishConnections() error {
 	cli, err := docker.NewClient("unix:///var/run/docker.sock")
