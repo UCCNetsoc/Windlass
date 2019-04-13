@@ -4,22 +4,21 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/UCCNetworkingSociety/Windlass/connections"
 	"github.com/UCCNetworkingSociety/Windlass/types"
 	docker "github.com/fsouza/go-dockerclient"
 	"github.com/go-chi/chi"
 )
 
-type ContainerEndpoint struct {
-	servers *types.ServerGroup
-}
+type ContainerEndpoint struct{}
 
-func NewContainerEndpoints(r chi.Router, group *types.ServerGroup) {
-	e := ContainerEndpoint{group}
+func NewContainerEndpoints(r chi.Router) {
+	e := ContainerEndpoint{}
 	r.Get("/containers", e.listContainers)
 }
 
 func (e ContainerEndpoint) listContainers(w http.ResponseWriter, r *http.Request) {
-	containers, err := e.servers.Docker.ListContainers(docker.ListContainersOptions{})
+	containers, err := connections.Group.Docker.ListContainers(docker.ListContainersOptions{})
 	if err != nil {
 		w.WriteHeader(500)
 		json.NewEncoder(w).Encode(types.APIError{

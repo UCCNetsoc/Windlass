@@ -6,7 +6,6 @@ import (
 )
 
 type Token struct {
-
 }
 
 // CheckAPIToken compares the JWT Token claims to the scope and resource owner

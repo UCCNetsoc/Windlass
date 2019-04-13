@@ -1,32 +1,27 @@
 package main
 
 import (
-	"github.com/spf13/viper"
 	"net/http"
 
+	"github.com/spf13/viper"
+
 	"github.com/UCCNetworkingSociety/Windlass/api"
+	"github.com/UCCNetworkingSociety/Windlass/config"
+	"github.com/UCCNetworkingSociety/Windlass/connections"
 	"github.com/UCCNetworkingSociety/Windlass/must"
-	"github.com/UCCNetworkingSociety/Windlass/types"
 	"github.com/go-chi/chi"
 )
 
 func main() {
 	r := chi.NewRouter()
 
-	must.Do(func() error {
-		viper.GetViper()
-		return nil
-	})
+	v := viper.GetViper()
+	config.Load(v)
 
-	var s *types.ServerGroup
-	must.Do(func() error {
-		var err error
-		s, err = types.NewServerGroup()
-		return err
-	})
-	defer s.Close()
+	must.Do(connections.EstablishConnections)
+	defer connections.Group.Close()
 
-	api.NewAPI(s, r).Init()
+	api.NewAPI(r).Init()
 
 	http.ListenAndServe(":8080", r)
 }
