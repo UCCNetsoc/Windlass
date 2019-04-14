@@ -2,12 +2,12 @@ package connections
 
 import (
 	"fmt"
-	"time"
+
+	lxd "github.com/lxc/lxd/client"
 
 	"github.com/Strum355/viper"
 	"github.com/UCCNetworkingSociety/Windlass/auth"
 	"github.com/UCCNetworkingSociety/Windlass/auth/provider"
-	docker "github.com/fsouza/go-dockerclient"
 	"upper.io/db.v3/lib/sqlbuilder"
 	"upper.io/db.v3/mysql"
 	"upper.io/db.v3/sqlite"
@@ -16,7 +16,7 @@ import (
 type ServerGroup struct {
 	Database sqlbuilder.Database
 	SQLite   sqlbuilder.Database
-	Docker   *docker.Client
+	LXD      lxd.ContainerServer
 	Auth     provider.AuthProvider
 }
 
@@ -36,14 +36,22 @@ func (e ServerGroupError) Component() string {
 var Group ServerGroup
 
 func EstablishConnections() error {
-	cli, err := docker.NewClient(viper.GetString("DOCKER_SOCKET"))
+	var (
+		err          error
+		lxdConn      lxd.ContainerServer
+		mysqlConn    sqlbuilder.Database
+		sqliteConn   sqlbuilder.Database
+		authProvider provider.AuthProvider
+	)
+
+	lxdConn, err = lxd.ConnectLXDUnix(viper.GetString("LXD_SOCKET"), &lxd.ConnectionArgs{
+		UserAgent: "Windlass",
+	})
 	if err != nil {
-		return ServerGroupError{"Docker", err}
+		return ServerGroupError{"LXD", err}
 	}
 
-	cli.SetTimeout(time.Second * 3)
-
-	mysqlConn, err := mysql.Open(mysql.ConnectionURL{
+	mysqlConn, err = mysql.Open(mysql.ConnectionURL{
 		Host:     viper.GetString("DB_HOST"),
 		User:     viper.GetString("DB_USER"),
 		Password: viper.GetString("DB_PASS"),
@@ -53,12 +61,12 @@ func EstablishConnections() error {
 		return ServerGroupError{"MySQL", err}
 	}
 
-	authProvider, err := auth.GetProvider()
+	authProvider, err = auth.GetProvider()
 	if err != nil {
 		return ServerGroupError{"Auth", err}
 	}
 
-	_, err = sqlite.Open(sqlite.ConnectionURL{
+	sqliteConn, err = sqlite.Open(sqlite.ConnectionURL{
 		Database: "./sqlite.db",
 	})
 	if err != nil {
@@ -66,9 +74,9 @@ func EstablishConnections() error {
 	}
 
 	Group = ServerGroup{
-		Auth: authProvider,
-		//SQLite:   sqliteConn,
-		Docker:   cli,
+		Auth:     authProvider,
+		SQLite:   sqliteConn,
+		LXD:      lxdConn,
 		Database: mysqlConn,
 	}
 

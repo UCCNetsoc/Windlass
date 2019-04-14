@@ -11,8 +11,8 @@ func initDefaults(v *viper.Viper) {
 	v.SetDefault("LDAP_PASS", "pass")
 	v.SetDefault("LDAP_HOST", "localhost")
 
-	// Docker settings
-	v.SetDefault("DOCKER_SOCKET", "unix:///var/run/docker.sock")
+	// LXD settings
+	v.SetDefault("LXD_SOCKET", "/var/lib/lxd/unix.socket")
 }
 
 func Load(v *viper.Viper) {

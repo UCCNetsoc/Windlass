@@ -22,7 +22,7 @@ require (
 	github.com/jinzhu/gorm v1.9.2
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/juju/webbrowser v0.0.0-20180907093207-efb9432b2bcb // indirect
-	github.com/lxc/lxd v0.0.0-20190412215808-4f5329769215 // indirect
+	github.com/lxc/lxd v0.0.0-20190412215808-4f5329769215
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
 	github.com/pelletier/go-toml v1.3.0 // indirect
 	github.com/rogpeppe/fastuuid v1.0.0 // indirect

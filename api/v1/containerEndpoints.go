@@ -1,12 +1,8 @@
 package v1
 
 import (
-	"encoding/json"
 	"net/http"
 
-	"github.com/UCCNetworkingSociety/Windlass/connections"
-	"github.com/UCCNetworkingSociety/Windlass/types"
-	docker "github.com/fsouza/go-dockerclient"
 	"github.com/go-chi/chi"
 )
 
@@ -18,17 +14,17 @@ func NewContainerEndpoints(r chi.Router) {
 }
 
 func (e ContainerEndpoint) listContainers(w http.ResponseWriter, r *http.Request) {
-	containers, err := connections.Group.Docker.ListContainers(docker.ListContainersOptions{})
+	/* containers, err := connections.Group.Docker.ListContainers(docker.ListContainersOptions{})
 	if err != nil {
 		w.WriteHeader(500)
-		json.NewEncoder(w).Encode(types.APIError{
+		json.NewEncoder(w).Encode(common.APIError{
 			ErrorID: 100,
-			APIResponse: types.APIResponse{
+			APIResponse: common.APIResponse{
 				Status:  http.StatusInternalServerError,
 				Content: err.Error(),
 			},
 		})
 		return
 	}
-	json.NewEncoder(w).Encode(containers)
+	json.NewEncoder(w).Encode(containers) */
 }
