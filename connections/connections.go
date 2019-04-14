@@ -2,15 +2,14 @@ package connections
 
 import (
 	"fmt"
-	"os"
 	"time"
 
-	"upper.io/db.v3/mysql"
-
-	ldap "github.com/UCCNetworkingSociety/netsoc-go-ldap"
+	"github.com/Strum355/viper"
+	"github.com/UCCNetworkingSociety/Windlass/auth"
+	"github.com/UCCNetworkingSociety/Windlass/auth/provider"
 	docker "github.com/fsouza/go-dockerclient"
-	"github.com/spf13/viper"
 	"upper.io/db.v3/lib/sqlbuilder"
+	"upper.io/db.v3/mysql"
 	"upper.io/db.v3/sqlite"
 )
 
@@ -18,7 +17,7 @@ type ServerGroup struct {
 	Database sqlbuilder.Database
 	SQLite   sqlbuilder.Database
 	Docker   *docker.Client
-	LDAP     *ldap.Conn
+	Auth     provider.AuthProvider
 }
 
 type ServerGroupError struct {
@@ -37,7 +36,7 @@ func (e ServerGroupError) Component() string {
 var Group ServerGroup
 
 func EstablishConnections() error {
-	cli, err := docker.NewClient("unix:///var/run/docker.sock")
+	cli, err := docker.NewClient(viper.GetString("DOCKER_SOCKET"))
 	if err != nil {
 		return ServerGroupError{"Docker", err}
 	}
@@ -54,17 +53,12 @@ func EstablishConnections() error {
 		return ServerGroupError{"MySQL", err}
 	}
 
-	ldapConn, err := ldap.New(ldap.Config{
-		BaseDN:   os.Getenv("LDAP_DN"),
-		BindUser: os.Getenv("LDAP_USER"),
-		BindPass: os.Getenv("LDAP_PASS"),
-		Host:     os.Getenv("LDAP_HOST"),
-	})
+	authProvider, err := auth.GetProvider()
 	if err != nil {
-		return ServerGroupError{"LDAP", err}
+		return ServerGroupError{"Auth", err}
 	}
 
-	sqliteConn, err := sqlite.Open(sqlite.ConnectionURL{
+	_, err = sqlite.Open(sqlite.ConnectionURL{
 		Database: "./sqlite.db",
 	})
 	if err != nil {
@@ -72,8 +66,8 @@ func EstablishConnections() error {
 	}
 
 	Group = ServerGroup{
-		SQLite:   sqliteConn,
-		LDAP:     ldapConn,
+		Auth: authProvider,
+		//SQLite:   sqliteConn,
 		Docker:   cli,
 		Database: mysqlConn,
 	}
@@ -82,7 +76,7 @@ func EstablishConnections() error {
 }
 
 func (s *ServerGroup) Close() {
-	s.SQLite.Close()
+	//s.SQLite.Close()
 	s.Database.Close()
-	s.LDAP.Close()
+	s.Auth.Close()
 }

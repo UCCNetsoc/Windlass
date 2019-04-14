@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/spf13/viper"
+	"github.com/Strum355/viper"
 
 	"github.com/UCCNetworkingSociety/Windlass/api"
 	"github.com/UCCNetworkingSociety/Windlass/config"
