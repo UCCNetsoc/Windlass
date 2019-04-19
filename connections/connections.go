@@ -10,12 +10,10 @@ import (
 	"github.com/UCCNetworkingSociety/Windlass/auth/provider"
 	"upper.io/db.v3/lib/sqlbuilder"
 	"upper.io/db.v3/mysql"
-	"upper.io/db.v3/sqlite"
 )
 
 type ServerGroup struct {
 	Database sqlbuilder.Database
-	SQLite   sqlbuilder.Database
 	LXD      lxd.ContainerServer
 	Auth     provider.AuthProvider
 }
@@ -40,7 +38,6 @@ func EstablishConnections() error {
 		err          error
 		lxdConn      lxd.ContainerServer
 		mysqlConn    sqlbuilder.Database
-		sqliteConn   sqlbuilder.Database
 		authProvider provider.AuthProvider
 	)
 
@@ -66,16 +63,8 @@ func EstablishConnections() error {
 		return ServerGroupError{"Auth", err}
 	}
 
-	sqliteConn, err = sqlite.Open(sqlite.ConnectionURL{
-		Database: "./sqlite.db",
-	})
-	if err != nil {
-		return ServerGroupError{"SQLite", err}
-	}
-
 	Group = ServerGroup{
 		Auth:     authProvider,
-		SQLite:   sqliteConn,
 		LXD:      lxdConn,
 		Database: mysqlConn,
 	}
@@ -84,7 +73,6 @@ func EstablishConnections() error {
 }
 
 func (s *ServerGroup) Close() {
-	//s.SQLite.Close()
 	s.Database.Close()
 	s.Auth.Close()
 }

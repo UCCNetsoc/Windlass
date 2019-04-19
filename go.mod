@@ -21,7 +21,6 @@ require (
 	github.com/juju/version v0.0.0-20180108022336-b64dbd566305 // indirect
 	github.com/juju/webbrowser v0.0.0-20180907093207-efb9432b2bcb // indirect
 	github.com/lxc/lxd v0.0.0-20190412215808-4f5329769215
-	github.com/mattn/go-sqlite3 v1.10.0 // indirect
 	github.com/pelletier/go-toml v1.3.0 // indirect
 	github.com/rogpeppe/fastuuid v1.0.0 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
