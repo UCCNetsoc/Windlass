@@ -10,6 +10,7 @@ require (
 	code.cloudfoundry.org/systemcerts v0.0.0-20180917154049-ca00b2f806f2 // indirect
 	github.com/Strum355/viper v1.4.1
 	github.com/UCCNetworkingSociety/netsoc-go-ldap v0.0.0-20190120010400-3994c7708032
+	github.com/bwmarrin/lit v0.0.0-20190303032523-27d9d9737514
 	github.com/flosch/pongo2 v0.0.0-20181225140029-79872a7b2769 // indirect
 	github.com/fsouza/go-dockerclient v1.3.6 // indirect
 	github.com/go-chi/chi v4.0.2+incompatible

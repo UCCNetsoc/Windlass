@@ -11,6 +11,13 @@ func initDefaults(v *viper.Viper) {
 	v.SetDefault("LDAP_PASS", "pass")
 	v.SetDefault("LDAP_HOST", "localhost")
 
+	// MySQL Settings
+	v.SetDefault("DB_HOST", "db")
+	v.SetDefault("DB_PORT", 3306)
+	v.SetDefault("DB_USER", "netsoc")
+	v.SetDefault("DB_PASS", "netsoc")
+	v.SetDefault("DB_NAME", "netsoc_admin")
+
 	// LXD settings
 	v.SetDefault("LXD_SOCKET", "/var/lib/lxd/unix.socket")
 }

@@ -9,6 +9,8 @@ github.com/Strum355/viper v1.4.1/go.mod h1:WwgNRo07s1nB+s+NC671uOmXsk3hGUqvOKezf
 github.com/UCCNetworkingSociety/netsoc-go-ldap v0.0.0-20190120010400-3994c7708032 h1:KDLd5tF/V2xc5UdT0YmsRyx5RKI37HKF/oIoqgOm8p0=
 github.com/UCCNetworkingSociety/netsoc-go-ldap v0.0.0-20190120010400-3994c7708032/go.mod h1:d8azqUWQbn7nY4ONSQmiE+KzN+AdzgF4dFk4zhwv/hg=
 github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
+github.com/bwmarrin/lit v0.0.0-20190303032523-27d9d9737514 h1:zm4j2k8fOn37WoZCCQbMTs+BWh2S1SiomeAv6iRvqRM=
+github.com/bwmarrin/lit v0.0.0-20190303032523-27d9d9737514/go.mod h1:z4cxqo0ARxc42jGHYZT4XoICeLf9OVOkysN7LuqBZ24=
 github.com/containerd/continuity v0.0.0-20181203112020-004b46473808 h1:4BX8f882bXEDKfWIf0wa8HRvpnBoPszJJXL+TVbBw4M=
 github.com/containerd/continuity v0.0.0-20181203112020-004b46473808/go.mod h1:GL3xCUCBDV3CZiTSEKksMWbLE66hEyuu9qyDOOqM47Y=
 github.com/coreos/etcd v3.3.10+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=

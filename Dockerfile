@@ -13,7 +13,7 @@ COPY . .
 
 RUN go install
 
-CMD [ "go" "run" "main.go" ]
+CMD [ "go", "run", "main.go" ]
 
 FROM alpine
 

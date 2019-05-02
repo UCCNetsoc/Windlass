@@ -48,12 +48,14 @@ func EstablishConnections() error {
 		return ServerGroupError{"LXD", err}
 	}
 
-	mysqlConn, err = mysql.Open(mysql.ConnectionURL{
+	opts := mysql.ConnectionURL{
 		Host:     viper.GetString("DB_HOST"),
 		User:     viper.GetString("DB_USER"),
 		Password: viper.GetString("DB_PASS"),
 		Database: viper.GetString("DB_NAME"),
-	})
+	}
+
+	mysqlConn, err = mysql.Open(opts)
 	if err != nil {
 		return ServerGroupError{"MySQL", err}
 	}
