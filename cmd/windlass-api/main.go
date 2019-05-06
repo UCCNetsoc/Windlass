@@ -3,8 +3,6 @@ package main
 import (
 	"net/http"
 
-	"github.com/Strum355/viper"
-
 	"github.com/UCCNetworkingSociety/Windlass/api"
 	"github.com/UCCNetworkingSociety/Windlass/app/config"
 	"github.com/UCCNetworkingSociety/Windlass/app/connections"
@@ -16,8 +14,7 @@ import (
 func main() {
 	r := chi.NewRouter()
 
-	v := viper.GetViper()
-	config.Load(v)
+	config.Load()
 
 	must.Do(connections.EstablishConnections)
 	defer connections.Group.Close()
