@@ -1,7 +1,7 @@
 package unrestricted
 
 import (
-	"github.com/UCCNetworkingSociety/Windlass/auth/provider"
+	"github.com/UCCNetworkingSociety/Windlass/app/auth/provider"
 )
 
 type UnrestrictedAuthProvider struct{}

@@ -6,10 +6,10 @@ import (
 	"github.com/Strum355/viper"
 
 	"github.com/UCCNetworkingSociety/Windlass/api"
-	"github.com/UCCNetworkingSociety/Windlass/config"
-	"github.com/UCCNetworkingSociety/Windlass/connections"
-	"github.com/UCCNetworkingSociety/Windlass/logging"
-	"github.com/UCCNetworkingSociety/Windlass/must"
+	"github.com/UCCNetworkingSociety/Windlass/app/config"
+	"github.com/UCCNetworkingSociety/Windlass/app/connections"
+	"github.com/UCCNetworkingSociety/Windlass/utils/logging"
+	"github.com/UCCNetworkingSociety/Windlass/utils/must"
 	"github.com/go-chi/chi"
 )
 
@@ -21,7 +21,6 @@ func main() {
 
 	must.Do(connections.EstablishConnections)
 	defer connections.Group.Close()
-	log.Info("connections established")
 
 	api.NewAPI(r).Init()
 	log.Info("API server started")

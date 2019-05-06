@@ -2,12 +2,13 @@ package connections
 
 import (
 	"fmt"
+	"github.com/UCCNetworkingSociety/Windlass/utils/logging"
 
 	lxd "github.com/lxc/lxd/client"
 
 	"github.com/Strum355/viper"
-	"github.com/UCCNetworkingSociety/Windlass/auth"
-	"github.com/UCCNetworkingSociety/Windlass/auth/provider"
+	"github.com/UCCNetworkingSociety/Windlass/app/auth"
+	"github.com/UCCNetworkingSociety/Windlass/app/auth/provider"
 	"upper.io/db.v3/lib/sqlbuilder"
 	"upper.io/db.v3/mysql"
 )
@@ -71,6 +72,7 @@ func EstablishConnections() error {
 		Database: mysqlConn,
 	}
 
+	log.Debug("connections established")
 	return nil
 }
 
