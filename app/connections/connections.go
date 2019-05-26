@@ -13,26 +13,26 @@ import (
 	"upper.io/db.v3/mysql"
 )
 
-type ServerGroup struct {
+type Connections struct {
 	Database sqlbuilder.Database
 	LXD      lxd.ContainerServer
 	Auth     provider.AuthProvider
 }
 
-type ServerGroupError struct {
+type ConnectionsError struct {
 	component string
 	err       error
 }
 
-func (e ServerGroupError) Error() string {
+func (e ConnectionsError) Error() string {
 	return fmt.Sprintf("%s: %v", e.component, e.err)
 }
 
-func (e ServerGroupError) Component() string {
+func (e ConnectionsError) Component() string {
 	return e.component
 }
 
-var Group ServerGroup
+var Group Connections
 
 func EstablishConnections() error {
 	var (
@@ -42,31 +42,22 @@ func EstablishConnections() error {
 		authProvider provider.AuthProvider
 	)
 
-	lxdConn, err = lxd.ConnectLXDUnix(viper.GetString("LXD_SOCKET"), &lxd.ConnectionArgs{
-		UserAgent: "Windlass",
-	})
+	lxdConn, err = connectToLXD()
 	if err != nil {
-		return ServerGroupError{"LXD", err}
+		return err
 	}
 
-	opts := mysql.ConnectionURL{
-		Host:     viper.GetString("DB_HOST"),
-		User:     viper.GetString("DB_USER"),
-		Password: viper.GetString("DB_PASS"),
-		Database: viper.GetString("DB_NAME"),
-	}
-
-	mysqlConn, err = mysql.Open(opts)
+	mysqlConn, err = connectToMySQL()
 	if err != nil {
-		return ServerGroupError{"MySQL", err}
+		return err
 	}
 
 	authProvider, err = auth.GetProvider()
 	if err != nil {
-		return ServerGroupError{"Auth", err}
+		return ConnectionsError{"Auth", err}
 	}
 
-	Group = ServerGroup{
+	Group = Connections{
 		Auth:     authProvider,
 		LXD:      lxdConn,
 		Database: mysqlConn,
@@ -76,7 +67,32 @@ func EstablishConnections() error {
 	return nil
 }
 
-func (s *ServerGroup) Close() {
+func (s *Connections) Close() {
 	s.Database.Close()
 	s.Auth.Close()
+}
+
+func connectToLXD() (lxd.ContainerServer, error) {
+	lxdConn, err := lxd.ConnectLXDUnix(viper.GetString("LXD_SOCKET"), &lxd.ConnectionArgs{
+		UserAgent: "Windlass",
+	})
+	if err != nil {
+		return nil, ConnectionsError{"LXD", err}
+	}
+	return lxdConn, nil
+}
+
+func connectToMySQL() (sqlbuilder.Database, error) {
+	opts := mysql.ConnectionURL{
+		Host:     viper.GetString("DB_HOST"),
+		User:     viper.GetString("DB_USER"),
+		Password: viper.GetString("DB_PASS"),
+		Database: viper.GetString("DB_NAME"),
+	}
+
+	mysqlConn, err := mysql.Open(opts)
+	if err != nil {
+		return nil, ConnectionsError{"MySQL", err}
+	}
+	return mysqlConn, nil
 }

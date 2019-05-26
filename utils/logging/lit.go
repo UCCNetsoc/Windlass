@@ -10,6 +10,10 @@ const (
 
 func init() {
 	lit.Prefix = ""
+	lit.PrefixError = "ERROR"
+	lit.PrefixDebug = "DEBUG"
+	lit.PrefixWarning = "WARN "
+	lit.PrefixInformational = "INFO "
 	lit.LogLevel = lit.LogDebug
 }
 
