@@ -13,10 +13,10 @@ type LDAPAuthProvider struct {
 
 func Init() (provider.AuthProvider, error) {
 	ldapConn, err := ldap.New(ldap.Config{
-		BaseDN:   viper.GetString("LDAP_DN"),
-		BindUser: viper.GetString("LDAP_USER"),
-		BindPass: viper.GetString("LDAP_PASS"),
-		Host:     viper.GetString("LDAP_HOST"),
+		BaseDN:   viper.GetString("ldap.dn"),
+		BindUser: viper.GetString("ldap.user"),
+		BindPass: viper.GetString("ldap.pass"),
+		Host:     viper.GetString("ldap.host"),
 	})
 	if err != nil {
 		return nil, err

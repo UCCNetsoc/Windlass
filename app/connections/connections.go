@@ -2,7 +2,8 @@ package connections
 
 import (
 	"fmt"
-	"github.com/UCCNetworkingSociety/Windlass/utils/logging"
+
+	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
 
 	lxd "github.com/lxc/lxd/client"
 
@@ -73,7 +74,7 @@ func (s *Connections) Close() {
 }
 
 func connectToLXD() (lxd.ContainerServer, error) {
-	lxdConn, err := lxd.ConnectLXDUnix(viper.GetString("LXD_SOCKET"), &lxd.ConnectionArgs{
+	lxdConn, err := lxd.ConnectLXDUnix(viper.GetString("lxd.socket"), &lxd.ConnectionArgs{
 		UserAgent: "Windlass",
 	})
 	if err != nil {
@@ -84,10 +85,10 @@ func connectToLXD() (lxd.ContainerServer, error) {
 
 func connectToMySQL() (sqlbuilder.Database, error) {
 	opts := mysql.ConnectionURL{
-		Host:     viper.GetString("DB_HOST"),
-		User:     viper.GetString("DB_USER"),
-		Password: viper.GetString("DB_PASS"),
-		Database: viper.GetString("DB_NAME"),
+		Host:     viper.GetString("db.host"),
+		User:     viper.GetString("db.user"),
+		Password: viper.GetString("db.pass"),
+		Database: viper.GetString("db.name"),
 	}
 
 	mysqlConn, err := mysql.Open(opts)

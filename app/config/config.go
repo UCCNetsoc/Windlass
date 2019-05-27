@@ -2,37 +2,45 @@ package config
 
 import (
 	"encoding/json"
+	"strings"
+
 	"github.com/Strum355/viper"
-	"github.com/UCCNetworkingSociety/Windlass/utils/logging"
+	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
 )
 
 func initDefaults() {
 	// LDAP settings
-	viper.SetDefault("LDAP_USER", "admin")
-	viper.SetDefault("LDAP_DN", "dc=netsoc,dc=co")
-	viper.SetDefault("LDAP_PASS", "pass")
-	viper.SetDefault("LDAP_HOST", "localhost")
+	viper.SetDefault("ldap.user", "admin")
+	viper.SetDefault("ldap.dn", "dc=netsoc,dc=co")
+	viper.SetDefault("ldap.pass", "pass")
+	viper.SetDefault("ldap.host", "localhost")
 
 	// MySQL Settings
-	viper.SetDefault("DB_HOST", "db")
-	viper.SetDefault("DB_PORT", 3306)
-	viper.SetDefault("DB_USER", "netsoc")
-	viper.SetDefault("DB_PASS", "netsoc")
-	viper.SetDefault("DB_NAME", "netsoc_admin")
+	viper.SetDefault("db.host", "db")
+	viper.SetDefault("db.port", 3306)
+	viper.SetDefault("db.user", "netsoc")
+	viper.SetDefault("db.pass", "netsoc")
+	viper.SetDefault("db.name", "netsoc_admin")
+
+	// Container Host settings
+	viper.SetDefault("container.host", "lxd")
 
 	// LXD settings
-	viper.SetDefault("LXD_SOCKET", "/var/lib/lxd/unix.socket")
+	viper.SetDefault("lxd.socket", "/var/lib/lxd/unix.socket")
+
+	// Auth settings
+	viper.SetDefault("auth.provider", "")
 }
 
 func Load() {
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	initDefaults()
 	viper.AutomaticEnv()
 
 	// Print settings with secrets redacted
-	// Lowercase because viper lowercases everything it takes in
 	settings := viper.AllSettings()
-	settings["ldap_pass"] = "[redacted]"
-	settings["db_pass"] = "[redacted]"
+	settings["ldap"].(map[string]interface{})["pass"] = "[redacted]"
+	settings["db"].(map[string]interface{})["pass"] = "[redacted]"
 
 	out, _ := json.MarshalIndent(settings, "", "\t")
 	log.Debug("config: %s", string(out))

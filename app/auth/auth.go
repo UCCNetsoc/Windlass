@@ -8,7 +8,7 @@ import (
 )
 
 func GetProvider() (provider.AuthProvider, error) {
-	switch viper.GetString("AUTH_PROVIDER") {
+	switch viper.GetString("auth.provider") {
 	case "ldap":
 		return ldap.Init()
 	default:
