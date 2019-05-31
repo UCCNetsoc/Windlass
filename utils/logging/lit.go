@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	callDepth = 3
+	callDepth = 2
 )
 
 func init() {

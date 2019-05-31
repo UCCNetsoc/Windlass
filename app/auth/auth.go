@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"github.com/Strum355/viper"
 	"github.com/UCCNetworkingSociety/Windlass/app/auth/ldap"
 	"github.com/UCCNetworkingSociety/Windlass/app/auth/provider"
 	"github.com/UCCNetworkingSociety/Windlass/app/auth/unrestricted"
+	"github.com/spf13/viper"
 )
 
 func GetProvider() (provider.AuthProvider, error) {

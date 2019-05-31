@@ -1,7 +1,7 @@
 package ldap
 
 import (
-	"github.com/Strum355/viper"
+	"github.com/spf13/viper"
 
 	"github.com/UCCNetworkingSociety/Windlass/app/auth/provider"
 	ldap "github.com/UCCNetworkingSociety/netsoc-go-ldap"

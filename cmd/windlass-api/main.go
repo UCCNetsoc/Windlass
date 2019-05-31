@@ -6,7 +6,7 @@ import (
 	"github.com/UCCNetworkingSociety/Windlass/api"
 	"github.com/UCCNetworkingSociety/Windlass/app/config"
 	"github.com/UCCNetworkingSociety/Windlass/app/connections"
-	"github.com/UCCNetworkingSociety/Windlass/utils/logging"
+	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
 	"github.com/UCCNetworkingSociety/Windlass/utils/must"
 	"github.com/go-chi/chi"
 )
@@ -14,7 +14,7 @@ import (
 func main() {
 	r := chi.NewRouter()
 
-	config.Load()
+	must.Do(config.Load)
 
 	must.Do(connections.EstablishConnections)
 	defer connections.Group.Close()
