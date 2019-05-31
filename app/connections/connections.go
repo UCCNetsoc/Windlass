@@ -1,89 +1,98 @@
 package connections
 
 import (
-	"fmt"
-
-	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
+	consul "github.com/hashicorp/consul/api"
+	vault "github.com/hashicorp/vault/api"
 
 	lxd "github.com/lxc/lxd/client"
 
-	"github.com/Strum355/viper"
 	"github.com/UCCNetworkingSociety/Windlass/app/auth"
 	"github.com/UCCNetworkingSociety/Windlass/app/auth/provider"
+	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
+	"github.com/spf13/viper"
 	"upper.io/db.v3/lib/sqlbuilder"
 	"upper.io/db.v3/mysql"
 )
 
 type Connections struct {
-	Database sqlbuilder.Database
-	LXD      lxd.ContainerServer
-	Auth     provider.AuthProvider
+	database sqlbuilder.Database
+	lxd      lxd.ContainerServer
+	auth     provider.AuthProvider
+	consul   *consul.Client
+	vault    *vault.Client
 }
 
-type ConnectionsError struct {
-	component string
-	err       error
-}
-
-func (e ConnectionsError) Error() string {
-	return fmt.Sprintf("%s: %v", e.component, e.err)
-}
-
-func (e ConnectionsError) Component() string {
-	return e.component
-}
-
-var Group Connections
+var group Connections
 
 func EstablishConnections() error {
 	var (
-		err          error
-		lxdConn      lxd.ContainerServer
-		mysqlConn    sqlbuilder.Database
-		authProvider provider.AuthProvider
+		err error
 	)
 
-	lxdConn, err = connectToLXD()
-	if err != nil {
+	if _, err = GetConsul(); err != nil {
 		return err
 	}
 
-	mysqlConn, err = connectToMySQL()
-	if err != nil {
+	if _, err = GetMySQL(); err != nil {
 		return err
 	}
 
-	authProvider, err = auth.GetProvider()
-	if err != nil {
-		return ConnectionsError{"Auth", err}
+	if _, err = auth.GetProvider(); err != nil {
+		return err
 	}
 
-	Group = Connections{
-		Auth:     authProvider,
-		LXD:      lxdConn,
-		Database: mysqlConn,
+	if _, err = GetLXD(); err != nil {
+		return err
 	}
 
 	log.Debug("connections established")
 	return nil
 }
 
-func (s *Connections) Close() {
-	s.Database.Close()
-	s.Auth.Close()
+func Close() {
+	group.database.Close()
+	group.auth.Close()
 }
 
-func connectToLXD() (lxd.ContainerServer, error) {
-	lxdConn, err := lxd.ConnectLXDUnix(viper.GetString("lxd.socket"), &lxd.ConnectionArgs{
-		UserAgent: "Windlass",
-	})
-	if err != nil {
-		return nil, ConnectionsError{"LXD", err}
+func GetAuth() (provider.AuthProvider, error) {
+	if group.auth != nil {
+		return group.auth, nil
 	}
-	return lxdConn, nil
+
+	auth, err := auth.GetProvider()
+	if err != nil {
+		return nil, NewConnectionError(err, "Auth")
+	}
+
+	group.auth = auth
+
+	return auth, nil
 }
 
-func connectToMySQL() (sqlbuilder.Database, error) {
+func GetConsul() (*consul.Client, error) {
+	if group.consul != nil {
+		return group.consul, nil
+	}
+
+	config := consul.Config{
+		Address: viper.GetString("consul.host"),
+	}
+
+	client, err := consul.NewClient(&config)
+	if err != nil {
+		return nil, NewConnectionError(err, "Consul")
+	}
+
+	group.consul = client
+
+	return client, nil
+}
+
+func GetMySQL() (sqlbuilder.Database, error) {
+	if group.database != nil {
+		return group.database, nil
+	}
+
 	opts := mysql.ConnectionURL{
 		Host:     viper.GetString("db.host"),
 		User:     viper.GetString("db.user"),
@@ -93,7 +102,27 @@ func connectToMySQL() (sqlbuilder.Database, error) {
 
 	mysqlConn, err := mysql.Open(opts)
 	if err != nil {
-		return nil, ConnectionsError{"MySQL", err}
+		return nil, NewConnectionError(err, "MySQL")
 	}
+
+	group.database = mysqlConn
+
 	return mysqlConn, nil
+}
+
+func GetLXD() (lxd.ContainerServer, error) {
+	if group.lxd != nil {
+		return group.lxd, nil
+	}
+
+	lxdConn, err := lxd.ConnectLXDUnix(viper.GetString("lxd.socket"), &lxd.ConnectionArgs{
+		UserAgent: "Windlass",
+	})
+	if err != nil {
+		return nil, NewConnectionError(err, "LXD")
+	}
+
+	group.lxd = lxdConn
+
+	return lxdConn, nil
 }

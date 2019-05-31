@@ -17,7 +17,7 @@ func main() {
 	must.Do(config.Load)
 
 	must.Do(connections.EstablishConnections)
-	defer connections.Group.Close()
+	defer connections.Close()
 
 	api.NewAPI(r).Init()
 	log.Info("API server started")
