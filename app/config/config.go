@@ -4,39 +4,39 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/Strum355/viper"
+	"github.com/UCCNetworkingSociety/Windlass/app/connections"
+
 	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
+	"github.com/spf13/viper"
 )
 
-func initDefaults() {
-	// LDAP settings
-	viper.SetDefault("ldap.user", "admin")
-	viper.SetDefault("ldap.dn", "dc=netsoc,dc=co")
-	viper.SetDefault("ldap.pass", "pass")
-	viper.SetDefault("ldap.host", "localhost")
-
-	// MySQL Settings
-	viper.SetDefault("db.host", "db")
-	viper.SetDefault("db.port", 3306)
-	viper.SetDefault("db.user", "netsoc")
-	viper.SetDefault("db.pass", "netsoc")
-	viper.SetDefault("db.name", "netsoc_admin")
-
-	// Container Host settings
-	viper.SetDefault("container.host", "lxd")
-
-	// LXD settings
-	viper.SetDefault("lxd.socket", "/var/lib/lxd/unix.socket")
-
-	// Auth settings
-	viper.SetDefault("auth.provider", "")
-}
-
-func Load() {
+// Loads settings used throughout the program. Loads from environment variables before
+// optionally loading from other sources
+func Load() error {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	initDefaults()
 	viper.AutomaticEnv()
 
+	if viper.GetBool("consul.enabled") {
+		loadFromConsul()
+	}
+
+	printSettings()
+	return nil
+}
+
+func loadFromConsul() error {
+	client, err := connections.GetConsul()
+	if err != nil {
+		return err
+	}
+
+	client.KV()
+
+	return nil
+}
+
+func printSettings() {
 	// Print settings with secrets redacted
 	settings := viper.AllSettings()
 	settings["ldap"].(map[string]interface{})["pass"] = "[redacted]"
