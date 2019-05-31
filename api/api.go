@@ -1,7 +1,6 @@
 package api
 
 import (
-	v1 "github.com/UCCNetworkingSociety/Windlass/api/v1"
 	"github.com/go-chi/chi"
 )
 
@@ -17,6 +16,6 @@ func NewAPI(router *chi.Mux) *API {
 
 func (api *API) Init() {
 	api.routes.Route("/v1", func(r chi.Router) {
-		v1.NewContainerEndpoints(r)
+
 	})
 }

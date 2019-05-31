@@ -3,6 +3,8 @@ package v1
 import (
 	"net/http"
 
+	"github.com/UCCNetworkingSociety/Windlass/app/services"
+
 	"github.com/go-chi/chi"
 )
 
@@ -14,17 +16,7 @@ func NewContainerEndpoints(r chi.Router) {
 }
 
 func (e ContainerEndpoint) listContainers(w http.ResponseWriter, r *http.Request) {
-	/* containers, err := connections.Group.Docker.ListContainers(docker.ListContainersOptions{})
-	if err != nil {
-		w.WriteHeader(500)
-		json.NewEncoder(w).Encode(common.APIError{
-			ErrorID: 100,
-			APIResponse: common.APIResponse{
-				Status:  http.StatusInternalServerError,
-				Content: err.Error(),
-			},
-		})
-		return
-	}
-	json.NewEncoder(w).Encode(containers) */
+	services.NewContainerHostService().
+		WithContext(r.Context()).
+		CreateHost("sample_text")
 }

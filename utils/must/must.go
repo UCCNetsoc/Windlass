@@ -11,8 +11,7 @@ func Do(funs ...func() error) {
 }
 
 func do(fun func() error) {
-	err := fun()
-	if err != nil {
+	if err := fun(); err != nil {
 		panic(fmt.Sprintf("failed to start app: %v", err))
 	}
 }
