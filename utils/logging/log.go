@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	callDepth = 2
+	callDepth = 3
 )
 
 type Fields map[string]interface{}

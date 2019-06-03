@@ -32,6 +32,18 @@ func (service *ContainerHostService) WithContext(ctx context.Context) *Container
 	return service
 }
 
-func (service *ContainerHostService) CreateHost(name string) {
+func (service *ContainerHostService) CreateHost(name string) error {
+	options := host.ContainerHostCreateOptions{
+		Name: name,
+	}
 
+	if err := service.repo.CreateContainerHost(options); err != nil {
+		return err
+	}
+
+	if err := service.repo.StartContainerHost(options); err != nil {
+		return err
+	}
+
+	return nil
 }
