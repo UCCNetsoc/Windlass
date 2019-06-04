@@ -5,12 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/UCCNetworkingSociety/Windlass/middleware"
-
 	common "github.com/UCCNetworkingSociety/Windlass/api/models"
-
 	"github.com/UCCNetworkingSociety/Windlass/app/services"
-
+	"github.com/UCCNetworkingSociety/Windlass/middleware"
+	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
 	"github.com/go-chi/chi"
 )
 
@@ -19,7 +17,7 @@ type ContainerEndpoint struct{}
 // TODO sort out endpoint URIs
 func NewContainerEndpoints(r chi.Router) {
 	e := ContainerEndpoint{}
-	r.Get("/container", middleware.WithContext(e.createContainer, time.Second*3))
+	r.Get("/container", middleware.WithContext(e.createContainer, time.Second*5))
 }
 
 func (e ContainerEndpoint) createContainer(w http.ResponseWriter, r *http.Request) {
@@ -27,6 +25,7 @@ func (e ContainerEndpoint) createContainer(w http.ResponseWriter, r *http.Reques
 		WithContext(r.Context()).
 		CreateHost("sample text")
 	if err != nil {
+		log.Error("error creating container - %v", err)
 		json.NewEncoder(w).Encode(common.APIResponse{
 			Status:  http.StatusInternalServerError,
 			Content: "error creating container",

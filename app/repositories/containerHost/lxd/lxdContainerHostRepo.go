@@ -4,13 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lxc/lxd/shared/api"
-
 	"github.com/UCCNetworkingSociety/Windlass/app/connections"
-
-	lxdclient "github.com/lxc/lxd/client"
-
+	"github.com/UCCNetworkingSociety/Windlass/app/helpers"
 	host "github.com/UCCNetworkingSociety/Windlass/app/repositories/containerHost"
+	lxdclient "github.com/lxc/lxd/client"
+	"github.com/lxc/lxd/shared/api"
 )
 
 type LXDHost struct {
@@ -45,18 +43,14 @@ func (lxd *LXDHost) CreateContainerHost(opts host.ContainerHostCreateOptions) er
 		Name: opts.Name,
 		Source: api.ContainerSource{
 			Type:        "image",
-			Fingerprint: "76180b5eb160",
+			Fingerprint: "76180b5eb160", // alpine:3.8 image
 		},
 	})
 	if err != nil {
 		return err
 	}
 
-	if err = op.Wait(); err != nil {
-		return err
-	}
-
-	return nil
+	return helpers.OperationTimeout(lxd.ctx, op)
 }
 
 func (lxd *LXDHost) StartContainerHost(opts host.ContainerHostCreateOptions) error {
@@ -68,9 +62,5 @@ func (lxd *LXDHost) StartContainerHost(opts host.ContainerHostCreateOptions) err
 		return err
 	}
 
-	if err := op.Wait(); err != nil {
-		return err
-	}
-
-	return nil
+	return helpers.OperationTimeout(lxd.ctx, op)
 }
