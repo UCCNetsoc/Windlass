@@ -2,6 +2,10 @@ FROM golang:1.12 AS dev
 
 WORKDIR /windlass
 
+RUN go get github.com/go-task/task/cmd/task \
+    github.com/derekparker/delve/cmd/dlv \
+    github.com/nomad-software/vend
+
 ENV GO111MODULES=on
 
 COPY go.mod .
@@ -12,6 +16,8 @@ RUN go mod download
 COPY . . 
 
 RUN go install github.com/UCCNetworkingSociety/Windlass/cmd/windlass-api
+
+RUN go mod vendor && vend
 
 CMD [ "go", "run", "cmd/windlass-api/main.go" ]
 

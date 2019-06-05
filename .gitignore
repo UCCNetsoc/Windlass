@@ -1,2 +1,4 @@
 *.db
 Windlass
+vendor
+__debug_bin

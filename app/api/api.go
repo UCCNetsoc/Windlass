@@ -1,7 +1,7 @@
 package api
 
 import (
-	v1 "github.com/UCCNetworkingSociety/Windlass/api/v1"
+	v1 "github.com/UCCNetworkingSociety/Windlass/app/api/v1"
 	"github.com/go-chi/chi"
 )
 
