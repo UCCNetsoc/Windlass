@@ -10,12 +10,12 @@ Add this to your Windlass override for debugging and live reload in the Docker c
 ```yaml
 version: '3.7'
 services:
-windlass:
-    command: task debug -w
-    security_opt:
-    - seccomp:unconfined
-    ports:
-    - 3456:3456
-    volumes:
-    - /path/to/your/Windlass:/windlass
+    windlass:
+        command: task debug -w
+        security_opt:
+        - seccomp:unconfined
+        ports:
+        - 3456:3456
+        volumes:
+        - /path/to/your/Windlass:/windlass
 ```
