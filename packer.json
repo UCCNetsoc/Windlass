@@ -1,0 +1,30 @@
+{
+  "builders": [
+    {
+      "type": "lxd",
+      "name": "windlass-alpine",
+      "image": "images:alpine/3.8",
+      "output_image": "windlass-alpine",
+      "publish_properties": {
+        "description": "Alpine 3.8 image for UCC Netsoc Windlass",
+        "architecture": "amd64",
+        "version": "0.0.1"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 5",
+        "apk update",
+        "apk add openssh sudo nano",
+        "rc-update add sshd",
+        "/etc/init.d/sshd start",
+        "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config",
+        "/etc/init.d/sshd restart",
+        "echo root:sample_text | chpasswd"
+      ]
+    }
+  ]
+}

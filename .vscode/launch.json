@@ -5,6 +5,7 @@
 			"name": "Debug Windlass in Docker",
 			"type": "go",
 			"request": "launch",
+            "internalConsoleOptions": "neverOpen",
 			"mode": "remote",
 			"remotePath": "/windlass",
 			"port": 3456,

@@ -5,3 +5,12 @@ tasks:
       - bash ./cmd/debug.sh
     sources:
       - ./app/**/*.go
+  live-reload:
+    cmds:
+      - ps -ef | grep go-build | grep -v grep | awk '{print $2}' | xargs -r kill
+      - go run cmd/windlass-api/main.go
+    sources:
+      - app/**/*.go
+      - cmd/**/*.go
+      - middleware/**/*.go
+      - utils/**/*.go

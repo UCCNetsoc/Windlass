@@ -2,3 +2,4 @@
 Windlass
 vendor
 __debug_bin
+*.http
