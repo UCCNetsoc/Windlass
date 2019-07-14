@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	common "github.com/UCCNetworkingSociety/Windlass/app/api/models"
+	"github.com/UCCNetworkingSociety/Windlass/app/api/models"
 	"github.com/UCCNetworkingSociety/Windlass/app/services"
 	"github.com/UCCNetworkingSociety/Windlass/middleware"
 	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
@@ -21,14 +21,22 @@ func NewContainerEndpoints(r chi.Router) {
 }
 
 func (e ContainerEndpoint) createContainer(w http.ResponseWriter, r *http.Request) {
+	containerHostName := r.URL.Query().Get("name")
+	if containerHostName == "" {
+		json.NewEncoder(w).Encode(models.APIResponse{
+			Status:  http.StatusBadRequest,
+			Content: "project name can't be empty",
+		})
+		return
+	}
 	err := services.NewContainerHostService().
 		WithContext(r.Context()).
-		CreateHost(chi.URLParam(r, "name"))
+		CreateHost(containerHostName)
 	if err != nil {
 		log.Error("error creating container - %v", err)
-		json.NewEncoder(w).Encode(common.APIResponse{
+		json.NewEncoder(w).Encode(models.APIResponse{
 			Status:  http.StatusInternalServerError,
-			Content: "error creating container",
+			Content: "error creating project",
 		})
 		return
 	}

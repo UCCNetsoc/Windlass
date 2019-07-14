@@ -11,6 +11,7 @@ require (
 	github.com/UCCNetworkingSociety/netsoc-go-ldap v0.0.0-20190120010400-3994c7708032
 	github.com/bwmarrin/lit v0.0.0-20190510005413-9c5ce4f3cafc
 	github.com/flosch/pongo2 v0.0.0-20181225140029-79872a7b2769 // indirect
+	github.com/fsouza/go-dockerclient v1.4.1
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/hashicorp/consul/api v1.1.0

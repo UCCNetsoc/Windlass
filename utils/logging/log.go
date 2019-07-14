@@ -1,6 +1,9 @@
 package log
 
 import (
+	"encoding/json"
+	"os"
+
 	"github.com/bwmarrin/lit"
 )
 
@@ -33,7 +36,11 @@ func Debug(format string, a ...interface{}) {
 }
 
 func (e *Entry) Debug(format string, a ...interface{}) {
-	lit.Custom(lit.Writer, lit.LogDebug, callDepth, format, a...)
+	if e.fields != nil {
+		b, _ := json.Marshal(e.fields)
+		format += "\n\t" + string(b)
+	}
+	lit.Custom(os.Stdout, lit.LogDebug, callDepth, format, a...)
 }
 
 func Info(format string, a ...interface{}) {
@@ -42,7 +49,11 @@ func Info(format string, a ...interface{}) {
 }
 
 func (e *Entry) Info(format string, a ...interface{}) {
-	lit.Custom(lit.Writer, lit.LogInformational, callDepth, format, a...)
+	if e.fields != nil {
+		b, _ := json.Marshal(e.fields)
+		format += "\n\t" + string(b)
+	}
+	lit.Custom(os.Stdout, lit.LogInformational, callDepth, format, a...)
 }
 
 func Warn(format string, a ...interface{}) {
@@ -51,7 +62,11 @@ func Warn(format string, a ...interface{}) {
 }
 
 func (e *Entry) Warn(format string, a ...interface{}) {
-	lit.Custom(lit.Writer, lit.LogWarning, callDepth, format, a...)
+	if e.fields != nil {
+		b, _ := json.Marshal(e.fields)
+		format += "\n\t" + string(b)
+	}
+	lit.Custom(os.Stdout, lit.LogWarning, callDepth, format, a...)
 }
 
 func Error(format string, a ...interface{}) {
@@ -60,5 +75,9 @@ func Error(format string, a ...interface{}) {
 }
 
 func (e *Entry) Error(format string, a ...interface{}) {
-	lit.Custom(lit.Writer, lit.LogError, callDepth, format, a...)
+	if e.fields != nil {
+		b, _ := json.Marshal(e.fields)
+		format += "\n\t" + string(b)
+	}
+	lit.Custom(os.Stderr, lit.LogError, callDepth, format, a...)
 }

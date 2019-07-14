@@ -22,5 +22,7 @@ func main() {
 	api.NewAPI(r).Init()
 	log.Info("API server started")
 
-	http.ListenAndServe(":8080", r)
+	if err := http.ListenAndServe(":8080", r); err != nil {
+		log.Error("error starting server - %v", err)
+	}
 }

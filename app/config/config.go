@@ -43,5 +43,5 @@ func printSettings() {
 	settings["db"].(map[string]interface{})["pass"] = "[redacted]"
 
 	out, _ := json.MarshalIndent(settings, "", "\t")
-	log.Debug("config: %s", string(out))
+	log.Debug("config:\n%s", string(out))
 }

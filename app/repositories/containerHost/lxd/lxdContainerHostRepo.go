@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
+
 	"github.com/UCCNetworkingSociety/Windlass/app/connections"
 	"github.com/UCCNetworkingSociety/Windlass/app/helpers"
 	host "github.com/UCCNetworkingSociety/Windlass/app/repositories/containerHost"
@@ -39,18 +41,23 @@ func (lxd *LXDHost) Ping() error {
 }
 
 func (lxd *LXDHost) CreateContainerHost(opts host.ContainerHostCreateOptions) error {
+	log.WithFields(log.Fields{
+		"containerHostName": opts.Name,
+	}).Debug("create container host request")
+
 	op, err := lxd.conn.CreateContainer(api.ContainersPost{
 		Name: opts.Name,
 		Source: api.ContainerSource{
 			Type:        "image",
-			Fingerprint: "76180b5eb160", // alpine:3.8 image
+			Fingerprint: "be0f1def31be", // Alpine 3.9 Windlass Edition
 		},
 	})
 	if err != nil {
 		return err
 	}
 
-	return helpers.OperationTimeout(lxd.ctx, op)
+	err = helpers.OperationTimeout(lxd.ctx, op)
+	return err
 }
 
 func (lxd *LXDHost) StartContainerHost(opts host.ContainerHostCreateOptions) error {
