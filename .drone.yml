@@ -1,0 +1,61 @@
+kind: pipeline
+name: default
+
+steps:
+- name: build_dev
+  image: plugins/docker
+  settings:
+    tag: dev-env
+    target: dev
+    repo: docker.netsoc.co/public/windlass
+    registry: docker.netsoc.co
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  when:
+    event:
+      - push
+    branch:
+      - master
+- name: build_prod
+  image: plugins/docker
+  settings:
+    tag: latest
+    repo: docker.netsoc.co/netsoc/windlass
+    registry: docker.netsoc.co
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  when:
+    event:
+      - push
+    branch:
+      - master
+
+- name: discord_notif
+  image: appleboy/drone-discord
+  environment:
+    WEBHOOK_ID:
+      from_secret: discord_webhook_id
+    WEBHOOK_TOKEN:
+      from_secret: discord_webhook_token
+  settings:
+    username: Netsoc CI
+    avatar_url: https://noahsc.xyz/public_images/drone.png
+    color: "#42f483"
+    message: >
+      {{#success build.status}}
+        Windlass successfully built and pushed. Build num {{build.number}}.
+      {{else}}
+        Windlass failed to build. Build num {{build.number}}.
+      {{/success}}    
+  when:
+    event: 
+      - push
+    branch: 
+      - master 
+    status:
+      - success
+      - failure           
