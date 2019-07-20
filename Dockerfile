@@ -15,11 +15,11 @@ RUN go mod download
 
 COPY . . 
 
-RUN go install github.com/UCCNetworkingSociety/Windlass/cmd/windlass-api
+RUN go install github.com/UCCNetworkingSociety/Windlass/cmd
 
 RUN go mod vendor && vend
 
-CMD [ "go", "run", "cmd/windlass-api/main.go" ]
+CMD [ "go", "run", "cmd/main.go" ]
 
 FROM alpine
 

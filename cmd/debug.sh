@@ -7,4 +7,4 @@ reset=$(ps -ef | grep 'dlv' | grep -v grep | awk '{print $2}' | xargs -r kill)
 eval $reset
 
 echo "Starting Delve"
-dlv debug ./cmd/windlass-api --build-flags '-mod vendor' -l 0.0.0.0:3456 --headless=true --api-version=2 &
+dlv debug ./cmd --build-flags '-mod vendor' -l 0.0.0.0:3456 --headless=true --api-version=2 &
