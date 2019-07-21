@@ -19,15 +19,12 @@ func Load() error {
 		return err
 	}
 
-	printSettings()
 	return nil
 }
 
-func printSettings() {
+func PrintSettings() {
 	// Print settings with secrets redacted
 	settings := viper.AllSettings()
-	settings["ldap"].(map[string]interface{})["pass"] = "[redacted]"
-	settings["db"].(map[string]interface{})["pass"] = "[redacted]"
 	settings["windlass"].(map[string]interface{})["secret"] = "[redacted]"
 
 	out, _ := json.MarshalIndent(settings, "", "\t")

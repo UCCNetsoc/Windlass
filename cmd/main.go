@@ -19,6 +19,8 @@ func main() {
 	must.Do(connections.EstablishConnections)
 	defer connections.Close()
 
+	config.PrintSettings()
+
 	api.NewAPI(r).Init()
 	log.Info("API server started")
 

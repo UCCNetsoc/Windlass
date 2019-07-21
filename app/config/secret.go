@@ -2,7 +2,7 @@ package config
 
 import (
 	"crypto/rand"
-	"encoding/hex"
+	"encoding/base64"
 	"errors"
 	"fmt"
 
@@ -39,7 +39,7 @@ func setSharedSecret() error {
 		return errors.New(fmt.Sprintf("error generating shared secret: %v", err))
 	}
 
-	encodedKey := hex.EncodeToString(key)
+	encodedKey := base64.StdEncoding.EncodeToString(key)
 
 	if _, err := client.KV().Put(&api.KVPair{
 		Key:   viper.GetString("consul.path") + "/secret",

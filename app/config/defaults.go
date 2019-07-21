@@ -5,19 +5,7 @@ import (
 )
 
 func initDefaults() {
-	// LDAP settings
-	viper.SetDefault("ldap.user", "admin")
-	viper.SetDefault("ldap.dn", "dc=netsoc,dc=co")
-	viper.SetDefault("ldap.pass", "pass")
-	viper.SetDefault("ldap.host", "localhost")
-
-	// MySQL Settings
-	viper.SetDefault("db.host", "db")
-	viper.SetDefault("db.port", 3306)
-	viper.SetDefault("db.user", "netsoc")
-	viper.SetDefault("db.pass", "netsoc")
-	viper.SetDefault("db.name", "netsoc_admin")
-
+	viper.SetDefault("windlass.secret", "sample_text")
 	// Container Host settings
 	viper.SetDefault("container.host", "lxd")
 
@@ -33,7 +21,7 @@ func initDefaults() {
 	viper.SetDefault("consul.path", "windlass")
 
 	// Vault settings
-	viper.SetDefault("vault.enabled", false)
+	viper.SetDefault("vault.enabled", false) // If enabled, gets dynamic secret to access Consul from Vault
 	viper.SetDefault("vault.token", "")
 
 	// Misc settings
