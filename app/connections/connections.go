@@ -4,8 +4,6 @@ import (
 	consul "github.com/hashicorp/consul/api"
 	vault "github.com/hashicorp/vault/api"
 
-	lxd "github.com/lxc/lxd/client"
-
 	"github.com/UCCNetworkingSociety/Windlass/app/auth"
 	"github.com/UCCNetworkingSociety/Windlass/app/auth/provider"
 	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
@@ -16,7 +14,6 @@ import (
 
 type Connections struct {
 	database sqlbuilder.Database
-	lxd      lxd.ContainerServer
 	auth     provider.AuthProvider
 	consul   *consul.Client
 	vault    *vault.Client
@@ -38,10 +35,6 @@ func EstablishConnections() error {
 	}
 
 	if _, err = auth.GetProvider(); err != nil {
-		return err
-	}
-
-	if _, err = GetLXD(); err != nil {
 		return err
 	}
 
@@ -76,6 +69,7 @@ func GetConsul() (*consul.Client, error) {
 
 	config := consul.Config{
 		Address: viper.GetString("consul.host"),
+		Token:   viper.GetString("consul.token"),
 	}
 
 	client, err := consul.NewClient(&config)
@@ -108,21 +102,4 @@ func GetMySQL() (sqlbuilder.Database, error) {
 	group.database = mysqlConn
 
 	return mysqlConn, nil
-}
-
-func GetLXD() (lxd.ContainerServer, error) {
-	if group.lxd != nil {
-		return group.lxd, nil
-	}
-
-	lxdConn, err := lxd.ConnectLXDUnix(viper.GetString("lxd.socket"), &lxd.ConnectionArgs{
-		UserAgent: "Windlass",
-	})
-	if err != nil {
-		return nil, NewConnectionError(err, "LXD")
-	}
-
-	group.lxd = lxdConn
-
-	return lxdConn, nil
 }

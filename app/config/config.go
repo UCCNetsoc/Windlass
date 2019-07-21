@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/UCCNetworkingSociety/Windlass/app/connections"
-
 	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
 	"github.com/spf13/viper"
 )
@@ -17,22 +15,11 @@ func Load() error {
 	initDefaults()
 	viper.AutomaticEnv()
 
-	if viper.GetBool("consul.enabled") {
-		loadFromConsul()
-	}
-
-	printSettings()
-	return nil
-}
-
-func loadFromConsul() error {
-	client, err := connections.GetConsul()
-	if err != nil {
+	if err := setSharedSecret(); err != nil {
 		return err
 	}
 
-	client.KV()
-
+	printSettings()
 	return nil
 }
 
@@ -41,6 +28,7 @@ func printSettings() {
 	settings := viper.AllSettings()
 	settings["ldap"].(map[string]interface{})["pass"] = "[redacted]"
 	settings["db"].(map[string]interface{})["pass"] = "[redacted]"
+	settings["windlass"].(map[string]interface{})["secret"] = "[redacted]"
 
 	out, _ := json.MarshalIndent(settings, "", "\t")
 	log.Debug("config:\n%s", string(out))

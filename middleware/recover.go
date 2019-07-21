@@ -42,7 +42,7 @@ func Recoverer(next http.Handler) http.Handler {
 		defer func() {
 			if r := recover(); r != nil {
 				panicLine := identifyPanic()
-				log.Error(fmt.Sprintf("panic: %v at %s", r, panicLine))
+				log.Error(fmt.Errorf("%v at %s", r, panicLine), "panic")
 				w.WriteHeader(http.StatusInternalServerError)
 			}
 		}()

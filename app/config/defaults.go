@@ -28,10 +28,9 @@ func initDefaults() {
 	viper.SetDefault("auth.provider", "")
 
 	// Consul settings
-	viper.SetDefault("consul.enabled", false)
 	viper.SetDefault("consul.host", "consul:8500")
-	viper.SetDefault("consul.token", "")
-	viper.SetDefault("consul.path", "/netsoc/config")
+	viper.SetDefault("consul.token", "") // ACL token
+	viper.SetDefault("consul.path", "windlass")
 
 	// Vault settings
 	viper.SetDefault("vault.enabled", false)
