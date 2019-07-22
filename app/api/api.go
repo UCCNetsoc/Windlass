@@ -21,6 +21,6 @@ func (api *API) Init() {
 	api.routes.Use(middlechi.RealIP)
 	api.routes.Use(middleware.Recoverer)
 	api.routes.Route("/v1", func(r chi.Router) {
-		v1.NewContainerEndpoints(r)
+		v1.NewProjectEndpoints(r)
 	})
 }
