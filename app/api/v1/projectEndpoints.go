@@ -1,10 +1,13 @@
 package v1
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
+	"time"
+
+	midware "github.com/UCCNetworkingSociety/Windlass/middleware"
+
+	"github.com/UCCNetworkingSociety/Windlass/app/api/models"
+	"github.com/go-chi/render"
 
 	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
 
@@ -23,25 +26,23 @@ func NewProjectEndpoints(r chi.Router) {
 	p := ProjectEndpoint{projectService: services.NewProjectService()}
 
 	r.Route("/project", func(r chi.Router) {
-		r.Post("/", p.create)
+		r.Post("/", midware.WithContext(p.create, time.Second*15))
 	})
 }
 
 func (p *ProjectEndpoint) create(w http.ResponseWriter, r *http.Request) {
-	var postProject project.Project
+	var newProject project.Project
 
-	dec := json.NewDecoder(r.Body)
-	dec.DisallowUnknownFields()
-	if err := dec.Decode(&postProject); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, map[string]interface{}{
-			"error": err.Error(),
+	if err := render.Bind(r, &newProject); err != nil {
+		render.Render(w, r, models.APIResponse{
+			Status:  http.StatusBadRequest,
+			Content: err.Error(),
 		})
 		return
 	}
 
-	if err := p.projectService.CreateProject(context.Background(), project.Project{}); err != nil {
+	if err := p.projectService.CreateProject(r.Context(), newProject); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Error(err, "error occurred")
+		log.WithError(err).Error("error occurred")
 	}
 }

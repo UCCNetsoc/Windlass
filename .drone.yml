@@ -43,14 +43,9 @@ steps:
       from_secret: discord_webhook_token
   settings:
     username: Netsoc CI
-    avatar_url: https://noahsc.xyz/public_images/drone.png
+    avatar_url: https://raw.githubusercontent.com/drone/brand/3051b0d85318a2a20b62927ba19fc07e24c0d751/logos/png/white/drone-logo-png-white-256.png
     color: "#42f483"
-    message: >
-      {{#success build.status}}
-        Windlass successfully built and pushed. Build num {{build.number}}.
-      {{else}}
-        Windlass failed to build. Build num {{build.number}}.
-      {{/success}}    
+    message: Windlass successfully built and pushed. Build num {{build.number}}. [Link]({{build.link}})
   when:
     event: 
       - push
@@ -58,4 +53,23 @@ steps:
       - master 
     status:
       - success
+
+- name: discord_notif
+  image: appleboy/drone-discord
+  environment:
+    WEBHOOK_ID:
+      from_secret: discord_webhook_id
+    WEBHOOK_TOKEN:
+      from_secret: discord_webhook_token
+  settings:
+    username: Netsoc CI
+    avatar_url: https://raw.githubusercontent.com/drone/brand/3051b0d85318a2a20b62927ba19fc07e24c0d751/logos/png/white/drone-logo-png-white-256.png
+    color: "#e04414"
+    message: Windlass failed for {{build.author}}. Build num {{build.number}}. [Link]({{build.link}})
+  when:
+    event: 
+      - push
+    branch: 
+      - master 
+    status:
       - failure           

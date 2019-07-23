@@ -2,16 +2,17 @@ package models
 
 import (
 	"encoding/json"
+	"net/http"
 	"time"
 )
 
 type APIResponse struct {
-	Status  uint16      `json:"status"`
+	Status  int         `json:"status"`
 	Content interface{} `json:"content"`
 }
 
 type apiResponse struct {
-	Status  uint16      `json:"status"`
+	Status  int         `json:"status"`
 	Content interface{} `json:"content"`
 	Time    time.Time   `json:"time"`
 }
@@ -23,4 +24,9 @@ func (resp APIResponse) MarshalJSON() ([]byte, error) {
 		Time:    time.Now(),
 	}
 	return json.Marshal(timed)
+}
+
+func (resp APIResponse) Render(w http.ResponseWriter, r *http.Request) error {
+	w.WriteHeader(resp.Status)
+	return nil
 }

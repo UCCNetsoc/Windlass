@@ -15,9 +15,11 @@ RUN go mod download
 
 COPY . . 
 
-RUN go install github.com/UCCNetworkingSociety/Windlass/cmd
+RUN go install github.com/UCCNetworkingSociety/Windlass/cmd/windlass
 
 RUN go mod vendor && vend
+
+ENV GO111MODULES=off
 
 CMD [ "go", "run", "cmd/main.go" ]
 
@@ -27,6 +29,6 @@ WORKDIR /bin
 
 RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 
-COPY --from=dev /go/bin/Windlass ./Windlass
+COPY --from=dev /go/bin/windlass ./windlass
 
-CMD [ "Windlass" ]
+CMD [ "windlass" ]

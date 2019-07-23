@@ -1,8 +1,12 @@
 package services
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"net/http"
+
+	"github.com/spf13/viper"
 
 	"github.com/UCCNetworkingSociety/Windlass-worker/app/models/project"
 	repo "github.com/UCCNetworkingSociety/Windlass/app/repositories"
@@ -27,7 +31,17 @@ func (p *ProjectService) CreateProject(ctx context.Context, project project.Proj
 
 	log.Info("address: %s", workerAddr)
 
-	resp, err := http.Get("http://" + workerAddr + "/health")
+	var buf *bytes.Buffer
+	json.NewEncoder(buf).Encode(project)
+
+	req, err := http.NewRequest(http.MethodPost, "http://"+workerAddr+"/projects", buf)
+	if err != nil {
+		return err
+	}
+
+	req = req.WithContext(ctx)
+	req.Header.Set("X-Auth-Token", viper.GetString("windlass.secret"))
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}

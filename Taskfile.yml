@@ -8,7 +8,7 @@ tasks:
   live-reload:
     cmds:
       - ps -ef | grep go-build | grep -v grep | awk '{print $2}' | xargs -r kill
-      - go run cmd/main.go
+      - go run cmd/windlass/main.go
     sources:
       - app/**/*.go
       - cmd/**/*.go

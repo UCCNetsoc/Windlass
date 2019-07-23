@@ -2,7 +2,7 @@ package log
 
 import (
 	"fmt"
-	"os"
+	"sort"
 	"strings"
 
 	"github.com/bwmarrin/lit"
@@ -16,6 +16,7 @@ type Fields map[string]interface{}
 
 type Entry struct {
 	fields Fields
+	err    error
 }
 
 var emptyEntry = &Entry{}
@@ -30,18 +31,43 @@ func init() {
 }
 
 func WithFields(f Fields) *Entry {
-	return &Entry{f}
+	return &Entry{fields: f}
+}
+
+func (e *Entry) WithFields(f Fields) *Entry {
+	if e.fields == nil {
+		e.fields = make(Fields)
+	}
+	for k, v := range f {
+		e.fields[k] = v
+	}
+	return e
 }
 
 func (f Fields) format() string {
-	if f == nil {
+	if f == nil || len(f) == 0 {
 		return ""
 	}
 
+	keys := make([]string, 0, len(f))
+	for k := range f {
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+
 	var builder strings.Builder
 	builder.WriteRune('\t')
-	for k, v := range f {
-		builder.WriteString(fmt.Sprintf("%s=%v", k, v))
+
+	var iterCount int
+	for _, k := range keys {
+		v := f[k]
+		s := fmt.Sprintf("%s=%v", k, v)
+		if iterCount < len(f)-1 {
+			s += " "
+		}
+		builder.WriteString(s)
+		iterCount++
 	}
 	builder.WriteRune('\n')
 	return builder.String()
@@ -52,8 +78,10 @@ func Debug(format string, a ...interface{}) {
 }
 
 func (e *Entry) Debug(format string, a ...interface{}) {
-	lit.Custom(os.Stdout, lit.LogDebug, callDepth, format, a...)
-	fmt.Print(e.fields.format())
+	builder := new(strings.Builder)
+	lit.Custom(builder, lit.LogDebug, callDepth, format, a...)
+	builder.WriteString(e.fields.format())
+	fmt.Print(builder.String())
 }
 
 func Info(format string, a ...interface{}) {
@@ -61,8 +89,10 @@ func Info(format string, a ...interface{}) {
 }
 
 func (e *Entry) Info(format string, a ...interface{}) {
-	lit.Custom(os.Stdout, lit.LogInformational, callDepth, format, a...)
-	fmt.Print(e.fields.format())
+	builder := new(strings.Builder)
+	lit.Custom(builder, lit.LogInformational, callDepth, format, a...)
+	builder.WriteString(e.fields.format())
+	fmt.Print(builder.String())
 }
 
 func Warn(format string, a ...interface{}) {
@@ -70,16 +100,31 @@ func Warn(format string, a ...interface{}) {
 }
 
 func (e *Entry) Warn(format string, a ...interface{}) {
-	lit.Custom(os.Stdout, lit.LogWarning, callDepth, format, a...)
-	fmt.Print(e.fields.format())
+	builder := new(strings.Builder)
+	lit.Custom(builder, lit.LogWarning, callDepth, format, a...)
+	builder.WriteString(e.fields.format())
+	fmt.Print(builder.String())
 }
 
-func Error(err error, format string, a ...interface{}) {
-	emptyEntry.Error(err, format, a...)
+func Error(format string, a ...interface{}) {
+	emptyEntry.Error(format, a...)
 }
 
-func (e *Entry) Error(err error, format string, a ...interface{}) {
-	format += fmt.Sprintf(": %v", err)
-	lit.Custom(os.Stderr, lit.LogError, callDepth, format, a...)
-	fmt.Print(e.fields.format())
+func (e *Entry) Error(format string, a ...interface{}) {
+	if e.err != nil {
+		e.fields["error"] = e.err
+	}
+	builder := new(strings.Builder)
+	lit.Custom(builder, lit.LogError, callDepth, format, a...)
+	builder.WriteString(e.fields.format())
+	fmt.Print(builder.String())
+}
+
+func WithError(err error) *Entry {
+	return &Entry{err: err}
+}
+
+func (e *Entry) WithError(err error) *Entry {
+	e.err = err
+	return e
 }
