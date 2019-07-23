@@ -34,7 +34,7 @@ steps:
     branch:
       - master
 
-- name: discord_notif
+- name: discord_notif_success
   image: appleboy/drone-discord
   environment:
     WEBHOOK_ID:
@@ -54,7 +54,7 @@ steps:
     status:
       - success
 
-- name: discord_notif
+- name: discord_notif_failure
   image: appleboy/drone-discord
   environment:
     WEBHOOK_ID:
