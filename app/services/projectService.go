@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/spf13/viper"
@@ -31,10 +32,10 @@ func (p *ProjectService) CreateProject(ctx context.Context, project project.Proj
 
 	log.Info("address: %s", workerAddr)
 
-	var buf *bytes.Buffer
+	buf := new(bytes.Buffer)
 	json.NewEncoder(buf).Encode(project)
 
-	req, err := http.NewRequest(http.MethodPost, "http://"+workerAddr+"/projects", buf)
+	req, err := http.NewRequest(http.MethodPost, "http://"+workerAddr+"/v1/projects", buf)
 	if err != nil {
 		return err
 	}
@@ -47,6 +48,15 @@ func (p *ProjectService) CreateProject(ctx context.Context, project project.Proj
 	}
 	defer resp.Body.Close()
 
-	log.Info("%d", resp.StatusCode)
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	log.WithFields(log.Fields{
+		"body":   string(b),
+		"status": resp.StatusCode,
+	}).Info("got response from worker")
+
 	return nil
 }

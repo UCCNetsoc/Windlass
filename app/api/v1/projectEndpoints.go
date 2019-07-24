@@ -26,7 +26,7 @@ func NewProjectEndpoints(r chi.Router) {
 	p := ProjectEndpoint{projectService: services.NewProjectService()}
 
 	r.Route("/project", func(r chi.Router) {
-		r.Post("/", midware.WithContext(p.create, time.Second*15))
+		r.Post("/", midware.WithContext(p.create, time.Second*30))
 	})
 }
 

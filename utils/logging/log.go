@@ -121,10 +121,13 @@ func (e *Entry) Error(format string, a ...interface{}) {
 }
 
 func WithError(err error) *Entry {
-	return &Entry{err: err}
+	return &Entry{err: err, fields: make(Fields)}
 }
 
 func (e *Entry) WithError(err error) *Entry {
 	e.err = err
+	if e.fields == nil {
+		e.fields = make(Fields)
+	}
 	return e
 }
