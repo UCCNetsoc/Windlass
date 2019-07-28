@@ -21,7 +21,7 @@ RUN go mod vendor && vend
 
 ENV GO111MODULES=off
 
-CMD [ "go", "run", "cmd/main.go" ]
+CMD [ "go", "run", "cmd/windlass/main.go" ]
 
 FROM alpine
 

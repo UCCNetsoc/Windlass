@@ -3,10 +3,10 @@
     {
       "type": "lxd",
       "name": "windlass",
-      "image": "ubuntu:18.04",
+      "image": "images:alpine/3.10",
       "output_image": "windlass",
       "publish_properties": {
-        "description": "Alpine 3.8 image for UCC Netsoc Windlass",
+        "description": "Alpine 3.10 image for UCC Netsoc Windlass",
         "architecture": "amd64",
         "version": "0.0.1"
       }
@@ -17,10 +17,10 @@
       "type": "shell",
       "inline": [
         "sleep 5",
-        "apt update",
-        "apt install openssh sudo nano",
-        "systemctl enable sshd",
-        "systemctl start sshd",
+        "apk update",
+        "apk add openssh sudo nano",
+        "rc-update add sshd",
+        "/etc/init.d/sshd start",
         "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config",
         "/etc/init.d/sshd restart",
         "echo root:sample_text | chpasswd"
