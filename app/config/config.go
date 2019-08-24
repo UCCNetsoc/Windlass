@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
+	"github.com/Strum355/log"
 	"github.com/spf13/viper"
 )
 

@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 
 	"github.com/spf13/viper"
 
+	"github.com/Strum355/log"
 	"github.com/UCCNetworkingSociety/Windlass-worker/app/models/project"
 	repo "github.com/UCCNetworkingSociety/Windlass/app/repositories"
-	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
 )
 
 type ProjectService struct {
@@ -57,6 +58,10 @@ func (p *ProjectService) CreateProject(ctx context.Context, project project.Proj
 		"body":   string(b),
 		"status": resp.StatusCode,
 	}).Info("got response from worker")
+
+	if resp.StatusCode != http.StatusOK {
+		return errors.New("non 200 code returned")
+	}
 
 	return nil
 }

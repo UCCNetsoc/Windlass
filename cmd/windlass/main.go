@@ -3,10 +3,10 @@ package main
 import (
 	"net/http"
 
+	"github.com/Strum355/log"
 	"github.com/UCCNetworkingSociety/Windlass/app/api"
 	"github.com/UCCNetworkingSociety/Windlass/app/config"
 	"github.com/UCCNetworkingSociety/Windlass/app/connections"
-	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
 	"github.com/UCCNetworkingSociety/Windlass/utils/must"
 	"github.com/go-chi/chi"
 )

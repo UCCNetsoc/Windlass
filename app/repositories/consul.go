@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
+	"github.com/Strum355/log"
 
 	"github.com/UCCNetworkingSociety/Windlass/app/connections"
 	"github.com/hashicorp/consul/api"

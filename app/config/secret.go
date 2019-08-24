@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/Strum355/log"
 	"github.com/UCCNetworkingSociety/Windlass/app/connections"
-	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
 	"github.com/hashicorp/consul/api"
 	"github.com/spf13/viper"
 )

@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"strings"
 
-	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
+	"github.com/Strum355/log"
 )
 
 func identifyPanic() string {

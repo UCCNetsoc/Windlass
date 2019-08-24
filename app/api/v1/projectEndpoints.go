@@ -4,12 +4,12 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Strum355/log"
+
 	midware "github.com/UCCNetworkingSociety/Windlass/middleware"
 
 	"github.com/UCCNetworkingSociety/Windlass/app/api/models"
 	"github.com/go-chi/render"
-
-	log "github.com/UCCNetworkingSociety/Windlass/utils/logging"
 
 	"github.com/UCCNetworkingSociety/Windlass-worker/app/models/project"
 
