@@ -3,7 +3,9 @@ package repo
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"strconv"
+	"time"
 
 	"github.com/Strum355/log"
 
@@ -27,12 +29,25 @@ func NewConsulRepository() *ConsulRepository {
 }
 
 func (c *ConsulRepository) SelectWorker(ctx context.Context) (string, error) {
-	service, _, err := c.consul.Catalog().Service("windlass-worker", "", new(api.QueryOptions).WithContext(ctx))
+	rand.Seed(time.Now().Unix())
+
+	services, _, err := c.consul.Health().Service("windlass-worker", "", false, new(api.QueryOptions).WithContext(ctx))
 	if err != nil {
 		return "", err
 	}
 
-	log.Info("addresses %+v", service)
+	addrString := make([]string, 0, len(services))
+	for _, s := range services {
+		addrString = append(addrString, s.Service.Address+":"+strconv.Itoa(s.Service.Port))
+	}
 
-	return service[0].ServiceAddress + ":" + strconv.Itoa(service[0].ServicePort), nil
+	log.WithFields(log.Fields{
+		"workerAddresses": addrString,
+	}).Info("fetched worker addresses from Consul")
+
+	random := rand.Intn(len(services))
+
+	randomService := services[random]
+
+	return randomService.Service.Address + ":" + strconv.Itoa(randomService.Service.Port), nil
 }

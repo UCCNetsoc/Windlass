@@ -31,7 +31,9 @@ func (p *ProjectService) CreateProject(ctx context.Context, project project.Proj
 		return err
 	}
 
-	log.Info("address: %s", workerAddr)
+	log.WithFields(log.Fields{
+		"workerAddress": workerAddr,
+	}).Info("chosen worker address")
 
 	buf := new(bytes.Buffer)
 	json.NewEncoder(buf).Encode(project)

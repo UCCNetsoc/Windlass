@@ -28,5 +28,5 @@ func PrintSettings() {
 	settings["windlass"].(map[string]interface{})["secret"] = "[redacted]"
 
 	out, _ := json.MarshalIndent(settings, "", "\t")
-	log.Debug("config:\n%s", string(out))
+	log.Debug("config:\n" + string(out))
 }
