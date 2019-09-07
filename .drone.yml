@@ -22,7 +22,7 @@ steps:
   image: plugins/docker
   settings:
     tag: latest
-    repo: docker.netsoc.co/netsoc/windlass
+    repo: docker.netsoc.co/private/windlass
     registry: docker.netsoc.co
     username:
       from_secret: docker_username
