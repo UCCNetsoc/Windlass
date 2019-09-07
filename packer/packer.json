@@ -1,0 +1,31 @@
+{
+  "builders": [
+    {
+      "type": "lxd",
+      "name": "windlass",
+      "image": "ubuntu-minimal:83024b7d9105",
+      "output_image": "windlass",
+      "init_sleep": "5",
+      "publish_properties": {
+        "description": "LXD image for UCC Netsoc Windlass",
+        "architecture": "amd64",
+        "version": "0.0.1"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "mkdir /etc/docker",
+        "echo '{\"storage-driver\": \"vfs\"}' > /etc/docker/daemon.json",
+        "apt update",
+        "apt install docker.io nginx -y"
+      ]
+    },
+    {
+        "type": "shell",
+        "script": "./packer/packer-cleanup.sh"
+    }
+  ]
+}
