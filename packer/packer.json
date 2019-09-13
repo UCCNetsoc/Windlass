@@ -27,13 +27,5 @@
         "type": "shell",
         "script": "./packer/packer-cleanup.sh"
     }
-  ],
-  "post-processors": [
-    {
-      "type": "shell-local",
-      "inline": [
-        "lxc image copy windlass netsoc: --public"
-      ]
-    }
   ]
 }
