@@ -27,5 +27,14 @@
         "type": "shell",
         "script": "./packer/packer-cleanup.sh"
     }
+  ],
+  "post-processors": [
+    {
+      "name": "publicize",
+      "type": "shell-local",
+      "inline": [
+        "lxc image edit windlass < ./packer/resources/lxc.yml"
+      ]
+    }
   ]
 }

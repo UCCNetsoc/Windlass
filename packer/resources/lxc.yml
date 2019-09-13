@@ -1,0 +1,6 @@
+auto_update: false
+properties:
+  architecture: amd64
+  description: Ubuntu LXD image for Windlass
+  version: 0.0.2
+public: true
