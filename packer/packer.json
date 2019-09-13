@@ -16,18 +16,24 @@
   "provisioners": [
     {
       "type": "shell",
-      "inline": [
-        "mkdir /etc/docker",
-        "echo '{\"storage-driver\": \"vfs\"}' > /etc/docker/daemon.json",
-        "apt update",
-        "apt install docker.io nginx -y",
-        "mkdir -m=500 /nginx",
-        "chown www-data:www-data /nginx"
-      ]
+      "script": "./packer/packer-setup.sh"
+    },
+    {
+      "type": "file",
+      "source": "./packer/resources/nginx.conf",
+      "destination": "/etc/nginx/nginx.conf"
     },
     {
         "type": "shell",
         "script": "./packer/packer-cleanup.sh"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "shell-local",
+      "inline": [
+        "lxc image copy windlass netsoc: --public"
+      ]
     }
   ]
 }
