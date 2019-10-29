@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math/rand"
 	"strconv"
@@ -31,9 +32,13 @@ func NewConsulRepository() *ConsulRepository {
 func (c *ConsulRepository) SelectWorker(ctx context.Context) (string, error) {
 	rand.Seed(time.Now().Unix())
 
-	services, _, err := c.consul.Health().Service("windlass-worker", "", false, new(api.QueryOptions).WithContext(ctx))
+	services, _, err := c.consul.Health().Service("windlass_worker", "", false, new(api.QueryOptions).WithContext(ctx))
 	if err != nil {
 		return "", err
+	}
+
+	if len(services) == 0 {
+		return "", errors.New("no windlass_worker services registered in Consul")
 	}
 
 	addrString := make([]string, 0, len(services))
