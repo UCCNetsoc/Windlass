@@ -4,6 +4,8 @@ go 1.12
 
 replace github.com/Sirupsen/logrus v1.4.0 => github.com/sirupsen/logrus v1.4.0
 
+replace github.com/go-check/check => github.com/go-check/check v0.0.0-20180628173108-788fd7840127
+
 //replace github.com/UCCNetworkingSociety/Windlass-worker => ../Windlass-worker
 
 require (
